@@ -1,24 +1,72 @@
 import React from 'react'
-import Highlighter from "react-highlight-words";
 
-function HTMLSanitizeText(text) {
-    let htmlElement = document.createElement('span')
-    htmlElement.innerHTML = text
-    return htmlElement.innerText
+/*
+export default function Document({children = "", entities = []}) {
+    console.log(HTMLSanitizeText(children))
+
+    console.log(entities.map(e => e.text))
+
+    return (
+        <Highlighter 
+            searchWords={entities.map(e => e.text)} 
+            textToHighlight={HTMLSanitizeText(children)} />
+    )
+}
+*/
+
+function createRegexFromEntity(entityString){
+    let pattern = `(\\s?${entityString.replace('.', '\\.').replace(/\s/g, "\\s*")}(?:\\s|[,.!?\\-]))`
+    console.log(pattern)
+    return new RegExp(pattern, 'gim')
+}
+
+function testPatternsOverString(patterns, string) {
+    for (const pattern of patterns) {
+        if(pattern.test(string)) {
+            return true
+        }
+    }
+
+    return false
+}
+
+function getHighlightedText(text, higlights=[]) {
+    let parts = [text];
+    let patterns = []
+
+    higlights.forEach(highlight => {
+        let pattern = createRegexFromEntity(highlight)
+        patterns.push(pattern)
+
+        let newParts = []
+
+        parts.forEach(part => {
+            let highlightParts = part.split(pattern);
+            newParts = [...newParts, ...highlightParts]
+        })
+
+        parts = newParts
+    })
+
+    console.log(parts)
+    return <span> { parts.map((part, i) => 
+        <span key={i} style={testPatternsOverString(patterns, part.toLowerCase()) ? { fontWeight: 'bold' } : {} }>
+            { part }
+        </span>)
+    } </span>;
 }
 
 export default function Document({children = "", entities = []}) {
-    // let text = HTMLSanitizeText(children.slice()).replace(/(\n){1,5}/g, ' ').trim()
-    let searchForWords = []
+    let ent = entities.map(e => e.text)
 
-    entities.forEach(entity => {
-        //let tx = text.substr(entity.offset_start, entity.offset_end-entity.offset_start).replace(/\t/g, '')
-        searchForWords.push(entity.text)
-    })
+    let test = []
+    if(ent.length > 0) {
+        for (let i = 0; i < 60; i++) {
+            test.push(ent[i])
+        }
+    }
 
-    
-    
     return (
-        <Highlighter searchWords={entities.map(e => e.text)} textToHighlight={children} />
+        <pre>{getHighlightedText(children, ent)}</pre>
     )
 }
