@@ -1,48 +1,16 @@
 import React from 'react';
-import logo from './logo.svg';
 import './App.css';
-import { ReactiveBase, CategorySearch, DataSearch, ReactiveList } from '@appbaseio/reactivesearch';
+import RouterConfig from './Router'
+import { BrowserRouter as Router } from "react-router-dom";
+import { ReactiveBase } from '@appbaseio/reactivesearch';
 
 function App() {
   return (
-    <ReactiveBase app="law_dataset" url="http://localhost:9200">
-				other components will go here.
-				<div>Hello ReactiveSearch!</div>
-        <DataSearch
-          componentId="SearchSensor"
-          dataField={['entities.REF-LAW']}
-          title="Search"
-          defaultValue="Тест"
-          fieldWeights={[1, 2]}
-          placeholder="Search for cities or venues"
-          autosuggest={true}
-          defaultSuggestions={[
-            { label: 'Songwriting', value: 'Songwriting' },
-            { label: 'Musicians', value: 'Musicians' },
-          ]}
-          highlight={true}
-          highlightField="group_city"
-          queryFormat="or"
-          fuzziness={0}
-          debounce={100}
-          react={{
-            and: ['SearchResult'],
-          }}
-          size={10}
-          showFilter={true}
-          filterLabel="Venue filter"
-          URLParams={false}
-        />
-
-        <ReactiveList
-          componentId="SearchResult"
-          react={{
-            and: ['SearchSensor'],
-          }}
-          renderItem={res => <div>{res.doc}</div>}
-        />
-
-			</ReactiveBase>
+    <Router>
+      <ReactiveBase app="law_dataset" url="http://localhost:9200">
+        <RouterConfig />
+      </ReactiveBase>
+    </Router>
   );
 }
 
