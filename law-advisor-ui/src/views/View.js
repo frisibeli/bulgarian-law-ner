@@ -27,10 +27,9 @@ function ViewDocument () {
     return (
         <div>
             {isLoading ? 
-            <div>Loading...</div>
+            <div>Зареждане...</div>
             :<div>
-                <h1>Document title here</h1>
-            <Document entities={data.entities_spans}>{data.doc}</Document>
+                <Document entities={data.entities_spans}>{data.doc}</Document>
             </div>}
         </div>
     );

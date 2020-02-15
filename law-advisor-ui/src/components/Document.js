@@ -1,18 +1,7 @@
 import React from 'react'
-
-/*
-export default function Document({children = "", entities = []}) {
-    console.log(HTMLSanitizeText(children))
-
-    console.log(entities.map(e => e.text))
-
-    return (
-        <Highlighter 
-            searchWords={entities.map(e => e.text)} 
-            textToHighlight={HTMLSanitizeText(children)} />
-    )
-}
-*/
+import Reference from './Reference'
+import {Modal, Paper, Button} from '@material-ui/core'
+import { mapEntityTypeToName } from '../mappers/entityMappers'
 
 function createRegexFromEntity(entityString){
     let pattern = `(\\s?${entityString.replace('.', '\\.').replace(/\s/g, "\\s*")}(?:\\s|[,.!?\\-]))`
@@ -22,51 +11,81 @@ function createRegexFromEntity(entityString){
 
 function testPatternsOverString(patterns, string) {
     for (const pattern of patterns) {
-        if(pattern.test(string)) {
-            return true
+        if(pattern.pattern.test(string)) {
+            return pattern.entity
         }
     }
 
     return false
 }
 
-function getHighlightedText(text, higlights=[]) {
+function highlightTextSpanIfEntity(part, patterns, childrenProps) {
+    let entity = testPatternsOverString(patterns, part.toLowerCase())
+    if(entity){
+        return <Reference entity={entity} {...childrenProps}>{part}</Reference>
+    }
+    return part
+}
+
+function getHighlightedText(text, entities=[], childrenProps={}) {
     let parts = [text];
     let patterns = []
 
-    higlights.forEach(highlight => {
-        let pattern = createRegexFromEntity(highlight)
-        patterns.push(pattern)
+    entities.forEach(entity => {
+        let pattern = createRegexFromEntity(entity.text)
+        patterns.push({pattern, entity})
 
         let newParts = []
 
         parts.forEach(part => {
-            let highlightParts = part.split(pattern);
-            newParts = [...newParts, ...highlightParts]
+            let entityParts = part.split(pattern);
+            newParts = [...newParts, ...entityParts]
         })
 
         parts = newParts
     })
 
-    console.log(parts)
-    return <span> { parts.map((part, i) => 
-        <span key={i} style={testPatternsOverString(patterns, part.toLowerCase()) ? { fontWeight: 'bold' } : {} }>
-            { part }
-        </span>)
+    return <span> { parts.map((part, i) => highlightTextSpanIfEntity(part, patterns, childrenProps))
     } </span>;
 }
 
 export default function Document({children = "", entities = []}) {
-    let ent = entities.map(e => e.text)
+    const [open, setOpen] = React.useState(false);
+    const [entityInfo, setEntityInfo] = React.useState({});
 
-    let test = []
-    if(ent.length > 0) {
-        for (let i = 0; i < 60; i++) {
-            test.push(ent[i])
-        }
+    const handleOpen = (entity) => {
+        setOpen(true);
+        setEntityInfo(entity)
+    };
+
+    const handleClose = () => {
+        setOpen(false);
+    };
+
+    const childrenProps = {
+        handleOpen
     }
-
+    
     return (
-        <pre>{getHighlightedText(children, ent)}</pre>
+        <Paper id="document-paper">
+            <pre>{getHighlightedText(children, entities, childrenProps)}</pre>
+            <Modal
+                aria-labelledby="modal-title"
+                aria-describedby="modal-description"
+                open={open}
+                disableAutoFocus={true}
+                onClose={handleClose}
+            >
+                <div className="ref-modal">
+                    <Paper className="modal-body">
+                        <h2 id="modal-title">{`${mapEntityTypeToName(entityInfo.type)}: ${entityInfo.text}`}</h2>
+                        <p id="modal-description">
+                            Зареждане на повече информация за <strong>{entityInfo.text}</strong>...
+                        </p>
+                        <Button href={`/?SearchSensor="${entityInfo.text}"`} variant="contained" color="primary">Потърси повече</Button>
+                    </Paper>
+                </div>
+            </Modal>
+        </Paper>
     )
 }

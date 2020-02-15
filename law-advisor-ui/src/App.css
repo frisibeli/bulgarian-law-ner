@@ -13,6 +13,69 @@
   padding: 10px;
 }
 
+pre{
+  white-space: pre-wrap;
+}
+
+span.entity{
+  display: inline-block;
+  border-bottom: dotted 1px black;
+  cursor: pointer;
+}
+
+.entity.court{
+  text-shadow: 0.1px 0.1px 0.1px grey;
+  color: hotpink;
+  border-color: hotpink;
+}
+.entity.date{
+  text-shadow: 0.1px 0.1px 0.1px grey;
+  color: yellowgreen;
+  border-color: yellowgreen;
+}
+.entity.country{
+  text-shadow: 0.1px 0.1px 0.1px grey;
+  color: cadetblue;
+  border-color: cadetblue;
+}
+.entity.city{
+  text-shadow: 0.1px 0.1px 0.1px grey;
+  color: coral;
+  border-color: coral;
+}
+.entity.ref-doc{
+  text-shadow: 0.1px 0.1px 0.1px grey;
+  color: cornflowerblue;
+  border-color: cornflowerblue;
+}
+.entity.ref-law{
+  text-shadow: 0.1px 0.1px 0.1px grey;
+  color: darkseagreen;
+  border-color: darkseagreen;
+}
+.entity.person{
+  text-shadow: 0.1px 0.1px 0.1px grey;
+  color: burlywood;
+  border-color: burlywood;
+}
+.entity.money{
+  text-shadow: 0.1px 0.1px 0.1px grey;
+  color: mediumseagreen;
+  border-color: mediumseagreen;
+}
+
+.ref-modal{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top:100px;
+  outline: none;
+}
+
+.ref-modal .modal-body{
+  padding: 20px;
+}
+
 @media (prefers-reduced-motion: no-preference) {
   .App-logo {
     animation: App-logo-spin infinite 20s linear;
@@ -32,6 +95,31 @@
 
 .App-link {
   color: #61dafb;
+}
+
+main#home {
+  margin: 0 auto;
+  margin-top: 50px;
+  width: 80%;
+}
+
+.view-doc {
+  text-decoration: none;
+}
+
+body{
+  background-color: aliceblue;
+}
+
+#results{
+  margin-top: 30px;
+}
+
+#document-paper{
+  width: 85%;
+  margin: 0 auto;
+  margin-top: 40px;
+  padding: 40px;
 }
 
 @keyframes App-logo-spin {
